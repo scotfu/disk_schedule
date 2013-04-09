@@ -33,6 +33,8 @@ def SCAN(current,input):
     elif input[0] < current < input[-1]:    
         index = input.index(current)
         if direction == u'down':
+            #first from current go down to the start of the input, 
+            #then go up to the end
             visited_list=list(reversed(input[0:index+1]))+input[index+1:]
             path_cost=input[-1]+current-input[0]*2
         else:
@@ -62,9 +64,9 @@ def SSF(current,input):
             if current-input[index-1] >= input[index+1]-current:
                 #comparing
                 path_cost += (input[index+1]-current)
-                visited_list.append(current)
-                current = input[index+1]#next current
-                input.pop(index)#remove current
+                visited_list.append(current)#add current to visited
+                current = input[index+1]#set next current
+                input.pop(index)#remove current from the input
             else:
                 path_cost += (current-input[index-1])
                 visited_list.append(current)
@@ -97,8 +99,6 @@ def generate_data():
 
 if __name__ == '__main__':
     input,current = generate_data()
-    input = [100, 50, 10, 20, 75]
-    current = 100
     print 'input:%s\ncurrent track:%s'%(input,current)
     print 'Using SCAN\npath cost:%s\nvisited order:%s'%SCAN(current,input[:])
     print 'Using SSF\npath cost:%s\nvisited order:%s'%SSF(current,input[:])
