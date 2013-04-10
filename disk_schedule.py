@@ -21,7 +21,7 @@ def get_SCAN_direction(current,input):
 def SCAN(current,input):
     '''
     SACN algorithm acts as a elevator,continue to travel in current direction
-    until the end, then go the opposite direction till the ohter end.
+    until the end, then go the opposite direction till the other end.
     '''
     direction = get_SCAN_direction(current,input)
     input.append(current)
@@ -47,6 +47,21 @@ def SCAN(current,input):
     return path_cost,visited_list
 
 
+
+def CSCAN(current,input):
+    direction = get_SCAN_direction(current,input)
+    input.append(current)
+    input.sort()
+    index = input.index(current)
+    if input.count(current) > 1:
+        index += 1
+    if direction == u'down':
+        visited_list = list(reversed(input[:index+1])) + list(reversed(input[index+1:]))
+    else:
+        visited_list = input[index+1:] + input[:index+1]
+    path_cost = (input[-1] - input[0]) * 2    
+    return path_cost, visited_list    
+
 def SSF(current,input):
     '''
     Shortest seek first, keep comparing the two neighbours of current track.
@@ -61,6 +76,8 @@ def SSF(current,input):
     try:
         while input:
             index=input.index(current)#current location
+            if index == 0:
+                raise IndexError
             if current-input[index-1] >= input[index+1]-current:
                 #comparing
                 path_cost += (input[index+1]-current)
@@ -78,7 +95,6 @@ def SSF(current,input):
         else:
             visited_list.extend(list(reversed(input[:])))
         path_cost += (input[-1]-input[0])
-
     return path_cost,visited_list
 
 def FIFO(current,input):
@@ -112,8 +128,11 @@ def generate_data():
 
 if __name__ == '__main__':
     input,current = generate_data()
+    input = [39105, 47330, 31195, 39888, 10853, 48810, 59627, 38421, 48750, 10896, 51251, 16565, 63254, 45139, 19479, 18683, 16092, 54109, 9118, 31263]
+    current = 14651
     print 'input:%s\ncurrent track:%s'%(input,current)
-    print 'Using SCAN\npath cost:%s\nvisited order:%s'%SCAN(current,input[:])
+#    print 'Using SCAN\npath cost:%s\nvisited order:%s'%SCAN(current,input[:])
+#    print 'Using CSCAN\npath cost:%s\nvisited order:%s'%CSCAN(current,input[:])
     print 'Using SSF\npath cost:%s\nvisited order:%s'%SSF(current,input[:])
-    print 'Using FIFO\npath cost:%s\nvisited order:%s'%FIFO(current,input[:])
+#    print 'Using FIFO\npath cost:%s\nvisited order:%s'%FIFO(current,input[:])
     
