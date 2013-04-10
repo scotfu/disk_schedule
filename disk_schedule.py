@@ -81,6 +81,19 @@ def SSF(current,input):
 
     return path_cost,visited_list
 
+def FIFO(current,input):
+    '''
+    First in , first out
+    '''
+    path_cost = 0
+    input.insert(0,current)
+    visited_list = input
+    for n in range(len(visited_list)-1):
+    #considered to use xrange, but xrange will be remove in the future    
+        path_cost += abs(visited_list[n]-visited_list[n+1])
+    return path_cost, visited_list
+
+
 def generate_data():
     '''
     Generate a set of number, each number in the input list
@@ -102,4 +115,5 @@ if __name__ == '__main__':
     print 'input:%s\ncurrent track:%s'%(input,current)
     print 'Using SCAN\npath cost:%s\nvisited order:%s'%SCAN(current,input[:])
     print 'Using SSF\npath cost:%s\nvisited order:%s'%SSF(current,input[:])
+    print 'Using FIFO\npath cost:%s\nvisited order:%s'%FIFO(current,input[:])
     
