@@ -76,6 +76,36 @@ def LOOK(current,input):
         visited_list = input
     return path_cost,visited_list
 
+def CLOOK(current,input):
+'''
+    CLOOK is similar to CSCAN,but CLOOK will go back and restart at the same
+    direction when the head has reached the last request in the current
+    direction.
+    '''
+    direction = get_SCAN_direction(current,input)
+    input.append(current)
+    input.sort()
+    if current == input[-1]:
+        #current is the end of the list, so just go down all the way
+        path_cost = current-input[0]
+        visited_list = list(reversed(input))
+    elif input[0] < current < input[-1]:    
+        index = input.index(current)
+        if direction == u'down':
+            #first from current go down to the start of the input, 
+            #then go up to the end
+            visited_list=list(reversed(input[0:index+1]))+list(reversed(input[index+1:]))
+            path_cost=input[-1]+current-input[0]*2
+        else:
+            visited_list=input[index:]+list(reversed(input[:index]))
+            path_cost=input[-1]*2-current-input[0]
+    else:
+        #current is the start of the list, so just go up all the way
+        path_cost= input[-1] - current
+        visited_list = input
+    return path_cost,visited_list
+    
+
 
 
 def CSCAN(current,input):
