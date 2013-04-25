@@ -2,6 +2,12 @@
 import random
 CYLINDER_START = 1
 CYLINDER_END = 1024
+'''
+'''
+
+ALGORITHMS=['SCAN','LOOK','CLOOK','CSCAN','SSF','FIFO','LIFO','RSS']
+
+#ALGORITHMS=['CSCAN']
 
 def get_SCAN_direction(current,input):
     '''
@@ -77,7 +83,7 @@ def LOOK(current,input):
     return path_cost,visited_list
 
 def CLOOK(current,input):
-'''
+    '''
     CLOOK is similar to CSCAN,but CLOOK will go back and restart at the same
     direction when the head has reached the last request in the current
     direction.
@@ -118,8 +124,8 @@ def CSCAN(current,input):
     if direction == u'down':
         visited_list = list(reversed(input[:index+1])) + list(reversed(input[index+1:]))
     else:
-        visited_list = input[index+1:] + input[:index+1]
-    path_cost = (input[-1] - input[0]) * 2    
+        visited_list = input[index:] + input[:index]
+    path_cost = (input[-1] - input[0]) * 2
     return path_cost, visited_list    
 
 def SSF(current,input):
@@ -169,6 +175,21 @@ def FIFO(current,input):
         path_cost += abs(visited_list[n]-visited_list[n+1])
     return path_cost, visited_list
 
+def LIFO(current,input):
+    '''
+    Last in , first out
+    '''
+    path_cost = 0
+    input.append(current)
+    input.reverse()
+    visited_list = input
+    for n in range(len(visited_list)-1):
+    #considered to use xrange, but xrange will be remove in the future    
+        path_cost += abs(visited_list[n]-visited_list[n+1])
+    return path_cost, visited_list
+
+
+
 def RSS(current,input):
     '''
     Random scheduling
@@ -196,17 +217,45 @@ def generate_data():
         count+=1
     input=list(set(input))    
     current = random.randint(CYLINDER_START,CYLINDER_END)
-    return input,current
+    return current,input
 
+def full_test(current,input,n=None):
+    output=''
+    if n:
+        output+='--------------------Round:%s--------------------\n'%n
+    output+='input:%s\ncurrent track:%s\n'%(input,current)
+    output+= 'Using SCAN\npath cost:%s\nvisited order:%s\n'%SCAN(current,input[:])
+    output+= 'Using LOOK\npath cost:%s\nvisited order:%s\n'%LOOK(current,input[:])
+    output+= 'Using CSCAN\npath cost:%s\nvisited order:%s\n'%CSCAN(current,input[:])
+    output+= 'Using SSF\npath cost:%s\nvisited order:%s\n'%SSF(current,input[:])
+    output+= 'Using FIFO\npath cost:%s\nvisited order:%s\n'%FIFO(current,input[:])
+    output+= 'Using LIFO\npath cost:%s\nvisited order:%s\n'%LIFO(current,input[:])
+    output+= 'Using RSS\npath cost:%s\nvisited order:%s\n'%RSS(current,input[:])
+    output+='--------------------------------------------------------\n'
+    return output
+
+
+def auto_test(local,n=None):
+    output=''
+    current,input = generate_data()
+    if n:
+        output+='--------------------Round:%s--------------------\n'%n
+    output+='input:%s\ncurrent track:%s\n'%(input,current)
+    for f in ALGORITHMS:
+        funcs = local.get(f,None)
+        if funcs:
+            result=funcs(current,input[:])
+            output+= 'Using {function}\npath cost:{path_cost}\nvisited order:{visited_order}\n'.format(function= funcs.__name__, path_cost=result[0],visited_order=result[1])
+    output+='--------------------------------------------------------\n'
+    return output    
 
 if __name__ == '__main__':
-    input,current = generate_data()
-    input=[1,2,334,454,676,3,434,78,899,232,343,454,782,45,13,1024]
-    print 'input:%s\ncurrent track:%s'%(input,current)
-    print 'Using SCAN\npath cost:%s\nvisited order:%s'%SCAN(current,input[:])
-    print 'Using LOOK\npath cost:%s\nvisited order:%s'%LOOK(current,input[:])
-    print 'Using CSCAN\npath cost:%s\nvisited order:%s'%CSCAN(current,input[:])
-    print 'Using SSF\npath cost:%s\nvisited order:%s'%SSF(current,input[:])
-    print 'Using FIFO\npath cost:%s\nvisited order:%s'%FIFO(current,input[:])
-    print 'Using RSS\npath cost:%s\nvisited order:%s'%RSS(current,input[:])
-    
+    N=1
+    result=''
+    while N < 21:
+        result+=auto_test(locals(),N)
+        N+=1
+    f=open('output.txt','w')
+    f.write(result)
+    f.close()
+
