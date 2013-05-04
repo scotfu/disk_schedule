@@ -1,3 +1,8 @@
+Disk scheduling algorightms is used by opearting system to decide the which cylinder should be visited first in the old fashion hard disk, which can reduce the seeking time, try to give each cylinder a fair chance to be visited and get a better performace.
+
+There are many disk scheduling algorithms, in this project, I implemented six algorithms and made compararsions between them.
+They are 
+
 Definition
 Track number start from 1 to 1024.
 

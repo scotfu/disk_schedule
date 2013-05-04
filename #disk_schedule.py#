@@ -5,7 +5,7 @@ import json
 CYLINDER_START = 1 #cylinder NO. starts at 1
 CYLINDER_END = 1024 # cylinderNO. ends at 1024 
 #cylinder NO is also reference as track NO
-ROUND= 20 
+ROUND= 20 # the auto test will run ROUND times
 ALGORITHMS=['SCAN','LOOK','CLOOK','CSCAN','SSF','FIFO','LIFO','RSS']
 #ALGORITHMS=['CSCAN']
 #Names of algorithms ,used for dynamically call the corresponding functions
