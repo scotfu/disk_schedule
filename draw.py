@@ -5,41 +5,84 @@ analytic PDF over it
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
+import matplotlib.patches as patches
+import matplotlib.path as path
 import json
 from disk_schedule import ROUND,ALGORITHMS
+from matplotlib.backends.backend_pdf import PdfPages
 
-def draw_pic(mu,sigma):
+def draw_pic(data):
+    pp = PdfPages('multipage.pdf',)
+    config={'dpi':200,'figsize':'58,116','bbox_inches':0}
+    for algorithm in ALGORITHMS:
+        name=algorithm
+        num=ALGORITHMS.index(algorithm)+1
+        al_data=data[algorithm]
+        mu, sigma = np.average(al_data),np.std(al_data)
+        x = mu + sigma * np.random.randn(10000)
+        fig = plt.figure()
+        ax = fig.add_subplot(1,2,1)
 
-    x = mu + sigma * np.random.randn(10000)
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+        x=np.linspace(-5*sigma+mu,mu+5*sigma,100)
 
-# the histogram of the data
-    n, bins, patches = ax.hist(x, 50, normed=1, facecolor='green', alpha=0.75)
+        y = mlab.normpdf(x,mu, sigma)
+        l = ax.plot(x, y, 'r', linewidth=1)
 
-# hist uses np.histogram under the hood to create 'n' and 'bins'.
-# np.histogram returns the bin edges, so there will be 50 probability
-# density values in n, 51 bin edges in bins and 50 patches.  To get
-# everything lined up, we'll compute the bin centers
-    bincenters = 0.5*(bins[1:]+bins[:-1])
-# add a 'best fit' line for the normal PDF
-    y = mlab.normpdf( bincenters, mu, sigma)
-    l = ax.plot(bincenters, y, 'r--', linewidth=1)
+        ax.set_xlabel('Normal Distribution')
+        ax.set_ylabel('Probability')
+        ax.set_title(r'$\ %s: \mu=%s,\ \sigma=%s$'%(name,mu,sigma))
+        ax.autoscale_view()
+        ax.grid(True)
 
-    ax.set_xlabel('Smarts')
-    ax.set_ylabel('Probability')
-#ax.set_title(r'$\mathrm{Histogram\ of\ IQ:}\ \mu=100,\ \sigma=15$')
-    ax.set_xlim(1, 10240)
-    ax.set_ylim(0, 0.03)
-    ax.grid(True)
 
-    plt.show()
 
-if __name__ =='__main__':
+        ax = fig.add_subplot(1,2,2)
+        ax.set_xlabel('Distribution')
+        n, bins = np.histogram(al_data, 40)
+        left = np.array(bins[:-1])
+        right = np.array(bins[1:])
+        bottom = np.zeros(len(left))
+        top = bottom + n
+
+
+
+        XY = np.array([[left,left,right,right], [bottom,top,top,bottom]]).T
+
+
+        barpath = path.Path.make_compound_path_from_polys(XY)
+
+
+        patch = patches.PathPatch(barpath, facecolor='blue', edgecolor='gray', alpha=0.8)
+        ax.add_patch(patch)
+
+
+        ax.set_xlim(left[0], right[-1])
+        ax.set_ylim(bottom.min(), top.max())
+        ax.autoscale_view()
+        ax.grid(True)
+        fig.set_size_inches(12,8)
+        pp.savefig(fig,bbox_inches=0,figsize=(16,82))
+
+#    plt.show()
+    pp.close()
+
+def reform_data():
+    reform={}
     with open('output.txt') as data:
         data=data.read()
     data= json.loads(data)
-    name=data["1"]["results"][0]["name"]
-    path_cost=data["1"]["results"][0]["path_cost"]
-#    draw_pic()
-    print name,path_cost
+    for no in range(1,ROUND+1):
+        for algorithm in range(len(ALGORITHMS)):
+            name=data[str(no)]["results"][algorithm]["name"]
+            path_cost=data[str(no)]["results"][algorithm]["path_cost"]
+            try:
+                reform[name].append(path_cost)
+            except:    
+                reform[name]=[path_cost]
+    return reform
+
+
+if __name__ =='__main__':
+    data=reform_data()
+    draw_pic(data)
+        
