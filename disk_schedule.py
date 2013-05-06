@@ -3,10 +3,10 @@ import random
 import json
 
 CYLINDER_START = 1 #cylinder NO. starts at 1
-CYLINDER_END = 1024 # cylinderNO. ends at 1024 
+CYLINDER_END = 10240 # cylinderNO. ends at 1024 
 #cylinder NO is also reference as track NO
-ROUND= 50
-DATA_LENGTH= 100
+ROUND= 100
+DATA_LENGTH= 1000
 ALGORITHMS=['SCAN','LOOK','CLOOK','CSCAN','SSF','FIFO','LIFO','RSS']
 #ALGORITHMS=['CSCAN','LOOK','CLOOK']
 #Names of algorithms ,used for dynamically call the corresponding functions

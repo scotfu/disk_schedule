@@ -13,7 +13,9 @@ from matplotlib.backends.backend_pdf import PdfPages
 
 def draw_pic(data):
     pp = PdfPages('multipage.pdf',)
+    a_pp=PdfPages('summary.pdf',)
     config={'dpi':200,'figsize':'58,116','bbox_inches':0}
+    a_fig = plt.figure()
     for algorithm in ALGORITHMS:
         name=algorithm
         num=ALGORITHMS.index(algorithm)+1
@@ -22,12 +24,12 @@ def draw_pic(data):
         x = mu + sigma * np.random.randn(10000)
         fig = plt.figure()
         ax = fig.add_subplot(1,2,1)
-
+        a_ax=a_fig.add_subplot(111)
         x=np.linspace(-5*sigma+mu,mu+5*sigma,100)
 
         y = mlab.normpdf(x,mu, sigma)
         l = ax.plot(x, y, 'r', linewidth=1)
-
+        a_ax.plot(x, y, 'r', linewidth=1)
         ax.set_xlabel('Normal Distribution')
         ax.set_ylabel('Probability')
         ax.set_title(r'$\ %s: \mu=%s,\ \sigma=%s$'%(name,mu,sigma))
@@ -61,9 +63,11 @@ def draw_pic(data):
         ax.autoscale_view()
         ax.grid(True)
         fig.set_size_inches(12,8)
-        pp.savefig(fig,bbox_inches=0,figsize=(16,82))
-
+        pp.savefig(fig)
+    a_fig.set_size_inches(52,8)
+    a_pp.savefig(a_fig)
 #    plt.show()
+    a_pp.close()
     pp.close()
 
 def reform_data():
