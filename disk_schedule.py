@@ -3,10 +3,10 @@ import random
 import json
 
 CYLINDER_START = 1 #cylinder NO. starts at 1
-CYLINDER_END = 10240 # cylinderNO. ends at 1024 
+CYLINDER_END = 1024 # cylinderNO. ends at 1024 
 #cylinder NO is also reference as track NO
-ROUND= 100
-DATA_LENGTH= 1000
+ROUND= 100 # each algorithm will run ROUND times
+DATA_LENGTH= 10 # the approximate length of the input list
 ALGORITHMS=['SCAN','LOOK','CLOOK','CSCAN','SSF','FIFO','LIFO','RSS']
 #ALGORITHMS=['CSCAN','LOOK','CLOOK']
 #Names of algorithms ,used for dynamically call the corresponding functions
@@ -14,7 +14,7 @@ ALGORITHMS=['SCAN','LOOK','CLOOK','CSCAN','SSF','FIFO','LIFO','RSS']
 '''
           Input and output of each algorithms
 
-The input data are a fix sized list of cylindes numbers, the parameter 'input' and
+The input data are a fix sized list of cylindes numbers-the parameter 'input' and
 the current cylinder number which the head stays in- the parameter 'current'.
 The output data are the total path cost of the seeking,the 'path_cost' and
 the a list of the cylinders' number order by the visiting order, the 'visited_list'.
@@ -153,10 +153,9 @@ def CLOOK(current,input):
             #first from current go down to the start of the input, 
             #then go up to the end
             visited_list=list(reversed(input[0:index+1]))+list(reversed(input[index+1:]))
-            path_cost=input[-1]+current-input[0]*2
         else:
             visited_list=input[index:]+list(reversed(input[:index]))
-            path_cost=input[-1]*2-current-input[0]
+        path_cost=(input[-1]-input[0])*2    
     else:
         #current is the start of the list, so just go up all the way
         path_cost= input[-1] - current
