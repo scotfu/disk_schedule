@@ -1,7 +1,4 @@
-"""
-Make a histogram of normally distributed random numbers and plot the
-analytic PDF over it
-"""
+#-*- coding:utf-8 -*-
 import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
@@ -11,32 +8,41 @@ import json
 from disk_schedule import ROUND,ALGORITHMS
 from matplotlib.backends.backend_pdf import PdfPages
 
+'''
+Function draw_pic is based on the code in this page
+http://matplotlib.org/examples/api/histogram_demo.html
+'''
+
+
+COLORS=['b','g', 'r','c','m','y','k' ,'grey']
+
+
 def draw_pic(data):
-    pp = PdfPages('multipage.pdf',)
+    pp = PdfPages('distributions.pdf',)
     a_pp=PdfPages('summary.pdf',)
-    config={'dpi':200,'figsize':'58,116','bbox_inches':0}
     a_fig = plt.figure()
     for algorithm in ALGORITHMS:
         name=algorithm
-        num=ALGORITHMS.index(algorithm)+1
         al_data=data[algorithm]
+
         mu, sigma = np.average(al_data),np.std(al_data)
         x = mu + sigma * np.random.randn(10000)
         fig = plt.figure()
-        ax = fig.add_subplot(1,2,1)
-        a_ax=a_fig.add_subplot(111)
-        x=np.linspace(-5*sigma+mu,mu+5*sigma,100)
 
+        a_ax=a_fig.add_subplot(111)# for summary
+
+        ax = fig.add_subplot(1,2,1)
+        x=np.linspace(-5*sigma+mu,mu+5*sigma,100)
         y = mlab.normpdf(x,mu, sigma)
         l = ax.plot(x, y, 'r', linewidth=1)
-        a_ax.plot(x, y, 'r', linewidth=1)
         ax.set_xlabel('Normal Distribution')
         ax.set_ylabel('Probability')
         ax.set_title(r'$\ %s: \mu=%s,\ \sigma=%s$'%(name,mu,sigma))
         ax.autoscale_view()
         ax.grid(True)
 
-
+        a_ax.plot(x, y,lw=8, label= algorithm,color= COLORS[ALGORITHMS.index(algorithm)], linewidth=1.0)
+        a_ax.legend(loc='upper left')
 
         ax = fig.add_subplot(1,2,2)
         ax.set_xlabel('Distribution')
@@ -45,28 +51,18 @@ def draw_pic(data):
         right = np.array(bins[1:])
         bottom = np.zeros(len(left))
         top = bottom + n
-
-
-
         XY = np.array([[left,left,right,right], [bottom,top,top,bottom]]).T
-
-
         barpath = path.Path.make_compound_path_from_polys(XY)
-
-
         patch = patches.PathPatch(barpath, facecolor='blue', edgecolor='gray', alpha=0.8)
         ax.add_patch(patch)
-
-
         ax.set_xlim(left[0], right[-1])
         ax.set_ylim(bottom.min(), top.max())
-        ax.autoscale_view()
         ax.grid(True)
         fig.set_size_inches(12,8)
         pp.savefig(fig)
     a_fig.set_size_inches(52,8)
     a_pp.savefig(a_fig)
-#    plt.show()
+#    plt.show() if you want to see the picture directly, uncomment this line
     a_pp.close()
     pp.close()
 

@@ -6,7 +6,7 @@ CYLINDER_START = 1 #cylinder NO. starts at 1
 CYLINDER_END = 1024 # cylinderNO. ends at 1024 
 #cylinder NO is also reference as track NO
 ROUND= 100 # each algorithm will run ROUND times
-DATA_LENGTH= 10 # the approximate length of the input list
+DATA_LENGTH= 50 # the approximate length of the input list
 ALGORITHMS=['SCAN','LOOK','CLOOK','CSCAN','SSF','FIFO','LIFO','RSS']
 #ALGORITHMS=['CSCAN','LOOK','CLOOK']
 #Names of algorithms ,used for dynamically call the corresponding functions
