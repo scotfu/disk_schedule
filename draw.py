@@ -15,7 +15,16 @@ http://matplotlib.org/examples/api/histogram_demo.html
 
 
 COLORS=['b','g', 'r','c','m','y','k' ,'grey']
+'''
+b: blue
+g: green
+r: red
+c: cyan
+m: magenta
+y: yellow
+k: black
 
+'''
 
 def draw_pic(data):
     pp = PdfPages('distributions.pdf',)
@@ -42,7 +51,7 @@ def draw_pic(data):
         ax.grid(True)
 
         a_ax.plot(x, y,lw=8, label= algorithm,color= COLORS[ALGORITHMS.index(algorithm)], linewidth=1.0)
-        a_ax.legend(loc='upper left')
+        a_ax.legend(loc='upper right')
 
         ax = fig.add_subplot(1,2,2)
         ax.set_xlabel('Distribution')
@@ -62,7 +71,7 @@ def draw_pic(data):
         pp.savefig(fig)
     a_fig.set_size_inches(52,8)
     a_pp.savefig(a_fig)
-#    plt.show() if you want to see the picture directly, uncomment this line
+#    plt.show()# if you want to see the picture directly, uncomment this line
     a_pp.close()
     pp.close()
 
